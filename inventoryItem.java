@@ -1,13 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package org.openjfx.oop_project;
-
-import java.time.LocalDate;
+package org.openjfx.homeinventorymanager;
 import java.util.Date;
 
-public class inventoryItem{
+public class inventoryItem {
     
     //Instance variables (based on what Iman listed at whatsapp group)
     private String itemName;
@@ -18,17 +12,15 @@ public class inventoryItem{
     private String note;
     private String photoFilePath;
     
-    public inventoryItem(String itemName, String location, double purchasePrice, Date datePurchased, String storeWebsite, String note) {
+    public inventoryItem(String itemName, String itemLocation, double purchasePrice, Date datePurchased,String purchasePlatform, String note, String photoFilePath){
         this.itemName = itemName;
-        this.location = location;
+        this.location = itemLocation;
         this.purchasePrice = purchasePrice;
         this.datePurchased = datePurchased;
-        this.storeOrWebsite = storeWebsite;
+        this.storeOrWebsite = purchasePlatform;
         this.note = note;
+        this.photoFilePath = photoFilePath;
     }
-    
-    
-    
     
     //Get and set methods for each instance variable
     public String getItemName() {
@@ -86,6 +78,5 @@ public class inventoryItem{
     public void setPhotoFilePath(String photoFilePath) {
         this.photoFilePath = photoFilePath;
     }    
-    
     
 }
