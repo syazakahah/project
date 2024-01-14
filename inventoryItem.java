@@ -11,7 +11,8 @@ public class inventoryItem {
     private String storeOrWebsite;
     private String note;
     private String photoFilePath;
-    
+
+    //constructor for inventoryItem
     public inventoryItem(String itemName, String itemLocation, double purchasePrice, Date datePurchased,String purchasePlatform, String note, String photoFilePath){
         this.itemName = itemName;
         this.location = itemLocation;
