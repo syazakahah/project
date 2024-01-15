@@ -2,14 +2,12 @@
 package org.openjfx.homeinventorymanager;
 
 import javafx.event.ActionEvent;
-//import javafx.event.EventHandler;
 import javafx.geometry.Insets; 
 import javafx.geometry.Pos; 
 import javafx.scene.Scene; 
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button; 
 import javafx.scene.control.Label;
-//import javafx.scene.text.Text; 
 import javafx.scene.control.TextField; 
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
@@ -72,43 +70,6 @@ public class LogIn {
         
       //Creating Buttons 
       Button submit = new Button("Submit"); 
-      //Button clear = new Button("Clear");  
-      
-       // create a HBox to hold the buttons
-      /* HBox buttons = new HBox(10); //compound container
-       buttons.getChildren().addAll(submit, clear);
-       buttons.setAlignment(Pos.CENTER);  */
-       
-       // create a HBox to hold all the items
-      /* HBox container2 = new HBox(10); //compound container
-       container2.getChildren().addAll(container1, buttons);
-       container2.setAlignment(Pos.CENTER);*/ 
-       
-      //Creating a Grid Pane 
-     /* GridPane gridPane = new GridPane();    
-      
-      //Setting size for the pane  
-      gridPane.setMinSize(400, 200); 
-       
-      //Setting the padding  
-      gridPane.setPadding(new Insets(10, 10, 10, 10)); 
-      
-      //Setting the vertical and horizontal gaps between the columns 
-      gridPane.setVgap(5); 
-      gridPane.setHgap(5);       
-      
-      //Setting the Grid alignment 
-      gridPane.setAlignment(Pos.CENTER); 
-       
-      //Arranging all the nodes in the grid 
-      gridPane.add(sceneTitle, 1, 0);
-      gridPane.add(usn, 0, 0); 
-      gridPane.add(usnText, 1, 0); 
-      gridPane.add(pass, 0, 1);       
-      gridPane.add(passText, 1, 1); 
-      gridPane.add(submit, 0, 2); 
-      gridPane.add(clear, 1, 2); */
-      
       
       submit.setOnAction((ActionEvent e) -> {
           String username = usnText.getText().toString();
@@ -141,21 +102,6 @@ public class LogIn {
     scene = new Scene(root,600,400);
     
     loginpage.setScene(scene);
-    //inventorypage.show();
-    //inventorypage.show();
-      
-      /*Stage loginPage = new Stage();
-      //Creating a scene object 
-      Scene scenee = new Scene(gridPane);  
-      
-      //Setting title to the Stage 
-      loginPage.setTitle("Grid Pane Example"); 
-         
-      //Adding scene to the stage 
-      loginPage.setScene(scene);
-      
-      //Adding scene to the stage 
-      loginPage.setScene(scenee);*/
     }
         public Scene getScene(){
         
