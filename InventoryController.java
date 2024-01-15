@@ -17,6 +17,7 @@ import java.util.Scanner;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -35,21 +36,21 @@ public class InventoryController {
     private TextField priceField;
     private DatePicker dateField;
     private TextField storewebsiteField;
-    private TextArea noteArea;
+    private TextField noteField;
     private TextField FilePathField;
     private ImageView photoView;
     private TextField SearchItemField;
     
     private Scene scene;
     
-    private static final String INVENTORY_FILE= "HomeInventoryManager.txt";
+    private static final String filename= "HomeInventoryManager.txt";
     
     private List<inventoryItem> inventoryItems= new ArrayList<>();
     
     public InventoryController(){
        // HBox itemname=new HBox(10);
        // HBox location=new HBox(10);
-        HBox priceanddate=new HBox(10);
+        HBox priceanddate=new HBox(15);
        // HBox storewebsite=new HBox(10);
        // HBox note=new HBox(10);
        // HBox filepath=new HBox(10);
@@ -60,7 +61,7 @@ public class InventoryController {
     priceField=new TextField();
     dateField=new DatePicker();
     storewebsiteField=new TextField();
-    noteArea=new TextArea();
+    noteField=new TextField();
     FilePathField=new TextField();
     photoView=new ImageView();
     SearchItemField=new TextField();
@@ -73,14 +74,26 @@ public class InventoryController {
     Label notes=new Label("Note ");
     Label photo=new Label("Photo ");
     
+    Button search=new Button("SEARCH");
+    Button add=new Button("ADD");
+    Button delete=new Button("DELETE");
+    Button edit=new Button("EDIT");
+    Button exit=new Button("EXIT");
+    Button save=new Button("SAVE");
+    
+    search.setOnAction(e -> search());
+    add.setOnAction(e-> add());
+    delete.setOnAction(e-> delete());
+    
+    
     priceanddate.getChildren().addAll(priceField,date,dateField);
     
-    VBox field = new VBox(10);
+    VBox field = new VBox(8);
     field.getChildren().addAll(iNameField,locationField,priceanddate,storewebsiteField,
-            noteArea,FilePathField );
-    VBox label=new VBox(20);
+            noteField,FilePathField );
+    VBox label=new VBox(15);
     label.getChildren().addAll(name,loc,price, store,notes,photo);
-    label.setAlignment(Pos.TOP_LEFT);
+    label.setAlignment(Pos.BASELINE_RIGHT);
     HBox root=new HBox(5);
     root.getChildren().addAll(label,field);
     root.setAlignment(Pos.CENTER);
@@ -112,7 +125,7 @@ public class InventoryController {
             dateField.setValue(item.getDatePurchased());
             storewebsiteField.setText(item.getStoreOrWebsite());
             FilePathField.setText(item.getPhotoFilePath());
-            noteArea.setText(item.getNote());
+            noteField.setText(item.getNote());
             try{
             InputStream stream = new FileInputStream("file:" + item.getPhotoFilePath());
             photoView.setImage(new Image(stream));
@@ -132,7 +145,7 @@ public class InventoryController {
             EditItem.setLocation(locationField.getText());
             EditItem.setPurchasePrice(Double.parseDouble(priceField.getText()));
             EditItem.setDatePurchased(dateField.getValue());
-            EditItem.setNote(noteArea.getText());
+            EditItem.setNote(noteField.getText());
             EditItem.setPhotoFilePath(FilePathField.getText());
             EditItem.setStoreOrWebsite(storewebsiteField.getText());
             
@@ -158,20 +171,66 @@ public class InventoryController {
         }
     }
     public void add(){
-        String itemName=iNameField.getText();
+        String itemname=iNameField.getText();
         String location=locationField.getText();
         double price=Double.parseDouble(priceField.getText());
         LocalDate date=dateField.getValue();
-        String note=noteArea.getText();
-      //  String filepath=
+        String note=noteField.getText();
+        String filepath=FilePathField.getText();
+        String website=storewebsiteField.getText();
+        
+        if (itemname.isEmpty()||location.isEmpty()||website.isEmpty()||
+                filepath.isEmpty()){
+            Alert information=new Alert(Alert.AlertType.INFORMATION);
+            information.setTitle("Invalid Input");
+            information.setContentText("Please fill in all the required field");
+            information.showAndWait();
+            
+        } else{
+            Alert confirmation=new Alert(Alert.AlertType.CONFIRMATION);
+            confirmation.setTitle("Add Item");
+            confirmation.setContentText("Are you sure you want to continue?");
+            Optional<ButtonType> result=confirmation.showAndWait();
+            
+                if(result.isPresent()&&result.get()==ButtonType.YES){
+                inventoryItem additem=new inventoryItem(itemname,location,price,
+                    date,website,note,filepath);
+                    inventoryItems.add(additem);
+                    System.out.println("Item has been added successfully");
+                    clearfields();
+                 } else{
+                    Alert information=new Alert(Alert.AlertType.INFORMATION);
+                    information.setContentText("Addition of item is cancelled");
+                    information.showAndWait();
+                    
+                }
+             }
+        }
+    public void clearfields(){
+        iNameField.clear();
+        locationField.clear();
+        priceField.clear();
+        dateField.setValue(null);
+        noteField.clear();
+        FilePathField.clear();
+        storewebsiteField.clear();
     }
-     
+    public void saveandexit(){
+        try(FileWriter writer=new FileWriter(filename)){
+            for(inventoryItem item : inventoryItems){
+                writer.write(item.toString() + "#");
+            }
+        } catch (IOException fe){
+            System.out.println(fe);
+            
+        }
+    }
         
     
-    public void readfile(String INVENTORY_FILE) {
+    public void readfile(String filename) {
         Scanner file;
         try {
-            file = new Scanner(new File(INVENTORY_FILE));
+            file = new Scanner(new File(filename));
         
          String input;
          while(file.hasNext()){
