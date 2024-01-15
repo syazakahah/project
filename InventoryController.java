@@ -1,231 +1,200 @@
-package org.openjfx.oop_project;
-import javafx.scene.control.DatePicker;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
+package org.openjfx.homeinventoryproject;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-//import java.time.LocalDate;
+import java.io.InputStream;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.Scanner;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 public class InventoryController {
-    private TextField itemNameField;
+
+    private TextField iNameField;
     private TextField locationField;
     private TextField priceField;
     private DatePicker dateField;
-    private TextField storeField;
+    private TextField storewebsiteField;
     private TextArea noteArea;
+    private TextField FilePathField;
     private ImageView photoView;
-
-    private static final String INVENTORY_FILE = "HomeInventoryFile.txt";
-
-    private List<inventoryItem> inventoryItems = new ArrayList<>();
-
-    public InventoryController() {
-        // Initialize UI components and set up the inventory scene
-        VBox root = new VBox(10);
-        itemNameField = new TextField();
-        locationField = new TextField();
-        priceField = new TextField();
-        dateField = new DatePicker();
-        storeField = new TextField();
-        noteArea = new TextArea();
-        photoView = new ImageView();
-
-        Button searchButton = new Button("Search");
-        Button addButton = new Button("Add");
-        Button editButton = new Button("Edit");
-        Button deleteButton = new Button("Delete");
-        Button saveAndExitButton = new Button("Save and Exit");
-
-        searchButton.setOnAction(e -> search());
-        addButton.setOnAction(e -> add());
-        editButton.setOnAction(e -> edit());
-        deleteButton.setOnAction(e -> delete());
-        saveAndExitButton.setOnAction(e -> saveAndExit());
-
-        root.getChildren().addAll(
-                new Label("Item Name:"), itemNameField,
-                new Label("Location:"), locationField,
-                new Label("Price:"), priceField,
-                new Label("Date:"), dateField,
-                new Label("Store:"), storeField,
-                new Label("Note:"), noteArea,
-                new Label("Photo:"), photoView,
-                searchButton, addButton, editButton, deleteButton, saveAndExitButton
-        );
-
-        Stage inventoryStage = new Stage();
-        inventoryStage.setScene(new Scene(root, 600, 400));
-        inventoryStage.setTitle("Inventory Manager");
-        inventoryStage.show();
-    }
-
-    public void search() {
-        // Implement search functionality here
-        // Display information based on the search result
-         String searchItemName = itemNameField.getText(); // Assuming itemNameField is a TextField for the search input
-
-        // Check if the searchItemName is not empty
-        if (!searchItemName.isEmpty()) {
-            // Iterate through the inventoryItems list to find a match
-            for (inventoryItem item : inventoryItems) {
-                if (item.getItemName().equalsIgnoreCase(searchItemName)) {
-                    // Display information about the found item (you can customize this part based on your UI)
-                    displayItemInformation(item);
-                    return; // Stop searching once a match is found
-                }
-            }
-
-            // If no match is found, show an alert
-            showAlert("Item Not Found", "The item with name '" + searchItemName + "' was not found.");
-        } else {
-            // If the search input is empty, show an alert
-            showAlert("Invalid Input", "Please enter an item name for the search.");
-        }
-    }
-    private void displayItemInformation(inventoryItem item) {
-        // Implement how to display item information in your UI (e.g., update text fields, labels, etc.)
-        itemNameField.setText(item.getItemName());
-        locationField.setText(item.getLocation());
-        priceField.setText(String.valueOf(item.getPurchasePrice()));
-        dateField.setValue(item.getDatePurchased());
-        storeField.setText(item.getStoreOrWebsite());
-        noteArea.setText(item.getNote());
-        if (item.getPhotoFilePath() != null && !item.getPhotoFilePath().isEmpty()) {
-            displayPhoto(item.getPhotoFilePath());
-        } else {
-            // Clear the photo view if no photo is available
-            photoView.setImage(null);
-        }
-        // Set other fields accordingly...
-    }
-    private void displayPhoto(String photoPath) {
-        // Load the image and display it in the photoView
-        Image image = new Image("file:" + photoPath); // Assuming the photo path is a file path
-        photoView.setImage(image);
-    }
-
-    private void showAlert(String title, String content) {
-        // Show an alert with the specified title and content
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
-
-    public void add() {
-         String itemName = itemNameField.getText();
-        String location = locationField.getText();
-        double purchasePrice = Double.parseDouble(priceField.getText());
-        Date datePurchased = dateField.getValue();
-        String storeWebsite = storeField.getText();
-        String note = noteArea.getText();
-
-        // Validate input (you can add more validation as needed)
-        if (itemName.isEmpty() || location.isEmpty() || storeWebsite.isEmpty()) {
-            showAlert("Invalid Input", "Please fill in all required fields.");
-            return;
-        }
-
-        // Create a new InventoryItem
-        inventoryItem newItem = new inventoryItem(itemName, location, purchasePrice, datePurchased, storeWebsite, note);
-
-        // Add the new item to the inventoryItems list
-        inventoryItems.add(newItem);
-
-        // Show success message or perform additional actions (e.g., clear input fields)
-        showAlert("Item Added", "The item '" + itemName + "' has been successfully added to the inventory.");
-        clearInputFields(); // Implement this method to clear input fields in your UI
-    }
-    private void clearInputFields() {
-        // Clear input fields in your UI
-        itemNameField.clear();
-        locationField.clear();
-        priceField.clear();
-        dateField.setValue(null);
-        storeField.clear();
-        noteArea.clear();
-        
-        // Clear other fields accordingly...
-    }
-
-    public void edit() {
-        // Implement edit functionality here
-        // Modify the selected InventoryItem
-        inventoryItem selectedItem = getSelectedItem(inventoryItem item);
-
-        // Check if an item is selected
-        if (selectedItem != null) {
-            // Populate UI components with existing values
-            itemNameField.setText(selectedItem.getItemName());
-            locationField.setText(selectedItem.getLocation());
-            priceField.setText(String.valueOf(selectedItem.getPurchasePrice()));
-            dateField.setValue(selectedItem.getDatePurchased());
-            storeField.setText(selectedItem.getStoreWebsite());
-            noteArea.setText(selectedItem.getNote());
-            
-            // Allow the user to make changes in the UI (assuming you have an Edit button for confirmation)
-            // ...
-
-            // After the user confirms the changes:
-            // Update the InventoryItem with the edited values
-            selectedItem.setItemName(itemNameField.getText());
-            selectedItem.setLocation(locationField.getText());
-            selectedItem.setPurchasePrice(Double.parseDouble(priceField.getText()));
-            selectedItem.setDatePurchased(dateField.getValue());
-            selectedItem.setStoreOrWebsite(storeField.getText());
-            selectedItem.setNote(noteArea.getText());
-
-            // Update the UI to reflect the changes (you may need to update your TableView or other UI elements)
-            // ...
-
-            // Show success message or perform additional actions
-            showAlert("Item Edited", "The item has been successfully edited.");
-            clearInputFields(); // Optional: Clear input fields after editing
-        } else {
-            // If no item is selected, show an alert
-            showAlert("No Item Selected", "Please select an item to edit.");
-        }
+    private TextField SearchItemField;
     
+    private Scene scene;
+    
+    private static final String INVENTORY_FILE= "HomeInventoryManager.txt";
+    
+    private List<inventoryItem> inventoryItems= new ArrayList<>();
+    
+    public InventoryController(){
+       // HBox itemname=new HBox(10);
+       // HBox location=new HBox(10);
+        HBox priceanddate=new HBox(10);
+       // HBox storewebsite=new HBox(10);
+       // HBox note=new HBox(10);
+       // HBox filepath=new HBox(10);
+       // HBox search=new HBox(10);
+        
+    iNameField=new TextField();
+    locationField=new TextField();
+    priceField=new TextField();
+    dateField=new DatePicker();
+    storewebsiteField=new TextField();
+    noteArea=new TextArea();
+    FilePathField=new TextField();
+    photoView=new ImageView();
+    SearchItemField=new TextField();
+    
+    Label name=new Label("Inventory Name ");
+    Label loc=new Label("Location ");
+    Label price=new Label("Purchase Price ");
+    Label date=new Label("Date Purchased ");
+    Label store=new Label("Store/Website ");
+    Label notes=new Label("Note ");
+    Label photo=new Label("Photo ");
+    
+    priceanddate.getChildren().addAll(priceField,date,dateField);
+    
+    VBox field = new VBox(10);
+    field.getChildren().addAll(iNameField,locationField,priceanddate,storewebsiteField,
+            noteArea,FilePathField );
+    VBox label=new VBox(20);
+    label.getChildren().addAll(name,loc,price, store,notes,photo);
+    label.setAlignment(Pos.TOP_LEFT);
+    HBox root=new HBox(5);
+    root.getChildren().addAll(label,field);
+    root.setAlignment(Pos.CENTER);
+    
+    Stage inventorypage=new Stage();
+    scene=new Scene(root,600,400);
+    
+    inventorypage.setScene(scene);
+    //inventorypage.show();
+    
+        
     }
-private inventoryItem getSelectedItem(inventoryItem item) {
-        // Get the selected item from the TableView
-       // inventoryItem selectedItem = tableView.getSelectionModel().getSelectedItem();
-         while(!(itemNameField.getText().equalsIgnoreCase(item.getItemName()))){
-           for(int n=0;n<inventoryItems.size();n++){
-               itemNameField.getText().equalsIgnoreCase(item.getItemName());
-           }
-           n=item[n];
-        }
-         inventoryItem selectedItem = ;
-        return selectedItem;
-    }
-    public void delete() {
-        // Implement delete functionality here
-        // Remove the selected InventoryItem from the list
-    }
-
-    public void saveAndExit() {
-        // Implement save and exit functionality here
-        // Save all inventory items to HomeInventoryFile.txt
-        try (FileWriter writer = new FileWriter(INVENTORY_FILE)) {
-            for (inventoryItem item : inventoryItems) {
-                // Write each item to the file
-                writer.write(item.toString() + "\n");
+    public void search() throws FileNotFoundException{
+        String ItemtoSearch= iNameField.getText();
+        
+        if(!ItemtoSearch.isEmpty()){
+            for(inventoryItem item : inventoryItems){
+                if(item.getItemName().equalsIgnoreCase(ItemtoSearch));
+                
+                displayItemInformation(item);
+                return;
             }
-        } catch (IOException e) {
-            e.printStackTrace(); // Handle the exception appropriately
+        }
+     }   
+    public void displayItemInformation(inventoryItem item){
+            iNameField.setText(item.getItemName());
+            locationField.setText(item.getLocation());
+            priceField.setText(String.valueOf(item.getPurchasePrice()));
+            dateField.setValue(item.getDatePurchased());
+            storewebsiteField.setText(item.getStoreOrWebsite());
+            FilePathField.setText(item.getPhotoFilePath());
+            noteArea.setText(item.getNote());
+            try{
+            InputStream stream = new FileInputStream("file:" + item.getPhotoFilePath());
+            photoView.setImage(new Image(stream));
+            } catch (FileNotFoundException e){
+                System.out.println("Message: " + e);
+		}
+            }
+    public void edit(inventoryItem EditItem){ 
+         
+        Alert confirmation=new Alert(Alert.AlertType.CONFIRMATION);
+        confirmation.setTitle("Edit Item");
+        confirmation.setContentText("Are you sure you want to continue?");
+        Optional<ButtonType> result=confirmation.showAndWait();
+        
+        if(result.isPresent()&& result.get()==ButtonType.OK){
+            EditItem.setItemName(iNameField.getText());
+            EditItem.setLocation(locationField.getText());
+            EditItem.setPurchasePrice(Double.parseDouble(priceField.getText()));
+            EditItem.setDatePurchased(dateField.getValue());
+            EditItem.setNote(noteArea.getText());
+            EditItem.setPhotoFilePath(FilePathField.getText());
+            EditItem.setStoreOrWebsite(storewebsiteField.getText());
+            
+            System.out.print("Item is successfully edited");
+        }
+        else{
+            System.out.print("Edition is cancelled ");
+        }
+    }   
+    public void delete(inventoryItem DeleteItem){
+        Alert confirmation=new Alert(Alert.AlertType.CONFIRMATION);
+        confirmation.setTitle("Edit Item");
+        confirmation.setContentText("Are you sure you want to delete?");
+        Optional<ButtonType> result=confirmation.showAndWait();
+        
+        if(result.isPresent()&& result.get()==ButtonType.YES){
+            inventoryItems.remove(DeleteItem);
+            System.out.print("Item is sucessfully deleted");
+        }
+        else{
+            System.out.print("Deletion is cancelled ");
+
         }
     }
+    public void add(){
+        String itemName=iNameField.getText();
+        String location=locationField.getText();
+        double price=Double.parseDouble(priceField.getText());
+        LocalDate date=dateField.getValue();
+        String note=noteArea.getText();
+      //  String filepath=
+    }
+     
+        
+    
+    public void readfile(String INVENTORY_FILE) {
+        Scanner file;
+        try {
+            file = new Scanner(new File(INVENTORY_FILE));
+        
+         String input;
+         while(file.hasNext()){
+             input=file.nextLine();
+             String item[]=input.split("#");
+             inventoryItem items=new inventoryItem(
+                     item[0],
+                     item[1],
+                     Double.parseDouble(item[2]),
+                     LocalDate.parse(item[3]),
+                     item[4],
+                     item[5],
+                     item[6]);
+             inventoryItems.add(items);
+         }
+         System.out.println();
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        }
+    }
+    public Scene getScene(){
+        
+        return scene;
+    }
 
-   
 }
-
