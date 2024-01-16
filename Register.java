@@ -1,6 +1,9 @@
 
 package org.openjfx.homeinventorymanager;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -24,14 +27,16 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 public class Register {
-    private String expectedUsername = "expectedUsername";
-    private String expectedPassword = "expectedPassword";
-    private String expectedEmail = "expectedEmail";
-    private String expectedFirstname = "expectedFirstname";
-    private String expectedLastname = "expectedLastname";
+    private String expectedUsername;
+    private String expectedPassword;
+    private String expectedEmail;
+    private String expectedFirstname;
+    private String expectedLastname;
     private Scene sceneRegister;
     private homepage homepage;
     private Stage primaryStage;
+    private static final String FILE_NAME = "LoginInfo.txt";
+
 
     public Register(homepage homepage, Stage primaryStage) {
         this.homepage = homepage;
@@ -67,17 +72,22 @@ public class Register {
         button.setAlignment(Pos.CENTER);
 
         submit.setOnAction((ActionEvent e) -> {
-            String firstname = fnText.getText().toString();
-            String lastname = lnText.getText().toString();
-            String emails = emelText.getText().toString();
-            String username = usnameeText.getText().toString();
-            String password = passText.getText().toString();
+            String firstname = fnText.getText().trim();
+            String lastname = lnText.getText().trim();
+            String emails = emelText.getText().trim();
+            String username = usnameeText.getText().trim();
+            String password = passText.getText().trim();
 
             if (fnText.getText().isEmpty() || lnText.getText().isEmpty() || emelText.getText().isEmpty()|| usnameeText.getText().isEmpty() || passText.getText().isEmpty()) {
                 showAlert(Alert.AlertType.ERROR, "Form Error!", "Please fill in all the fields");
                 return;
-            }
-
+            } 
+            expectedUsername = username;
+            expectedPassword = password;
+            expectedEmail = emails;
+            expectedFirstname = firstname;
+            expectedLastname = lastname;
+            saveRegistrationInfo();
             if (expectedFirstname.equals(firstname) && expectedLastname.equals(lastname)&& expectedUsername.equals(username) && expectedPassword.equals(password)&& expectedEmail.equals(emails)) {
                 infoBox("Registration Successful!", null, "Success");
             } else {
@@ -95,7 +105,26 @@ public class Register {
         root.setBorder(new Border(
                 new BorderStroke(Color.PINK, BorderStrokeStyle.DASHED, new CornerRadii(10), new BorderWidths(3))));
 
-        sceneRegister = new Scene(root, 600, 400);
+        sceneRegister = new Scene(root, 400, 300);
+    }
+    
+    private void saveRegistrationInfo() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true))) {
+            // Append the registration information to the text file
+            writer.write("First Name:"+ expectedFirstname);
+            writer.newLine();
+            writer.write("Last Name:"+ expectedLastname);
+            writer.newLine();
+            writer.write("Email:"+ expectedEmail);
+            writer.newLine();
+            writer.write("Username:"+ expectedUsername);
+            writer.newLine();
+            writer.write("Password:"+ expectedPassword );
+            writer.newLine();
+            writer.newLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void showAlert(Alert.AlertType alertType, String title, String message) {
@@ -118,6 +147,5 @@ public class Register {
         return sceneRegister;
     }
 }
-
 
 
