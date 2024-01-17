@@ -146,7 +146,7 @@ public class InventoryController {
 
     public void displayItemInformation(inventoryItem item){
             iNameField.setText(item.getItemName());
-            locationField.setText(item.getLocation());
+            locationField.getSelectionModel().select(item.getLocation());
             priceField.setText(String.valueOf(item.getPurchasePrice()));
             dateField.setValue(item.getDatePurchased());
             storewebsiteField.setText(item.getStoreOrWebsite());
@@ -172,7 +172,7 @@ public class InventoryController {
         
         if(result.isPresent()&& result.get()==ButtonType.OK){
             EditItem.setItemName(iNameField.getText());
-            EditItem.setLocation(locationField.getText());
+            EditItem.setLocation(locationField.getSelectionModel().getSelectedItem());
             EditItem.setPurchasePrice(Double.parseDouble(priceField.getText()));
             EditItem.setDatePurchased(dateField.getValue());
             EditItem.setNote(noteField.getText());
@@ -219,7 +219,7 @@ public class InventoryController {
     }
     public void add(){
         String itemname=iNameField.getText();
-        String location=locationField.getText();
+        String location=locationField.getSelectionModel().getSelectedItem();
         double price=Double.parseDouble(priceField.getText());
         LocalDate Date=dateField.getValue();
         String note=noteField.getText();
@@ -260,7 +260,7 @@ public class InventoryController {
         }
     public void clearfields(){
         iNameField.clear();
-        locationField.clear();
+        locationField.getSelectionModel().clearSelection();
         priceField.clear();
         dateField.setValue(null);
         noteField.clear();
@@ -270,7 +270,7 @@ public class InventoryController {
     public void saveandexit(){
        
         String itemname=iNameField.getText();
-        String location=locationField.getText();
+        String location=locationField.getSelectionModel().getSelectedItem();
         String price=priceField.getText();
         LocalDate Date=dateField.getValue();
         String note=noteField.getText();
