@@ -2,16 +2,21 @@ package org.openjfx.homeinventoryproject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Scanner;
+import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -45,12 +50,12 @@ public class InventoryController {
     private ImageView photoView;
     private TextField SearchItemField;
     
-    private Button search=new Button("SEARCH");
-    private Button add=new Button("ADD");
-    private Button delete=new Button("DELETE");
-    private Button edit=new Button("EDIT");
-    private Button exit=new Button("EXIT");
-    private Button save=new Button("SAVE");
+    private Button search=new Button("Search");
+    private Button add=new Button("Add");
+    private Button delete=new Button("Delete");
+    private Button edit=new Button("Edit");
+    private Button exit=new Button("Exit");
+    private Button clear=new Button ("Clear");
     private Scene scene;
     
  
@@ -90,12 +95,15 @@ public class InventoryController {
     
     search.setOnAction(e -> search());
     add.setOnAction(e -> add());
-    save.setOnAction(e -> saveandexit());
-    exit.setOnAction(e -> saveandexit());
+    clear.setOnAction(e->clearfields());
+    
+     exit.setOnAction((ActionEvent t)->{
+            confirmExit();
+        });
           
             
             HBox button1=new HBox(10);
-            button1.getChildren().addAll(edit,delete,save);
+            button1.getChildren().addAll(edit,delete,exit,clear);
             HBox button2=new HBox(10);
             button2.getChildren().addAll(add,search);
          
@@ -117,7 +125,7 @@ public class InventoryController {
     			new CornerRadii(10), new BorderWidths(3))));
     root.setAlignment(Pos.CENTER);
     Stage inventorypage=new Stage();
-    scene=new Scene(root,600,400);
+    scene=new Scene(root,800,500);
     
     
     inventorypage.setScene(scene);
@@ -128,18 +136,33 @@ public class InventoryController {
    
     
     public void search() {
-       readfile(inventoryItems);
+        readfile(inventoryItems);
         String ItemtoSearch= iNameField.getText();
-        
+        boolean found=false;
         if(!ItemtoSearch.isEmpty()){
             for(inventoryItem item : inventoryItems){
                 if(item.getItemName().equalsIgnoreCase(ItemtoSearch)){
                 
                 displayItemInformation(item);
-                return ;
-                }
+                found=true;
+                } 
+            }
+            if(!found){
+            Alert noItem=new Alert(Alert.AlertType.ERROR);
+            noItem.setContentText("Item is not in the record ");
+            noItem.show();
+            clearfields();
+            
+            
+        }
+               
                 
-            } 
+             
+        } else{
+            Alert noItem=new Alert(Alert.AlertType.ERROR);
+            noItem.setContentText("Please enter item name ");
+            noItem.show();
+            
         }
         
      } 
@@ -181,24 +204,13 @@ public class InventoryController {
             
             System.out.print("Item is successfully edited");
             saveandexit();
+            
         }
         else{
             System.out.print("Edition is cancelled ");
         }
     }   
-    public void selectItem(){
-        readfile(inventoryItems);
-        String selectedItem= iNameField.getText();
-        if(!selectedItem.isEmpty()){
-            for(inventoryItem item : inventoryItems){
-                if(item.getItemName().equalsIgnoreCase(selectedItem));
-                
-                displayItemInformation(item);
-                return  ;
-            }
-        }
-        
-    }
+  
     public void delete(inventoryItem DeleteItem){
         Alert confirmation=new Alert(Alert.AlertType.CONFIRMATION);
         confirmation.setTitle("Edit Item");
@@ -209,6 +221,7 @@ public class InventoryController {
             inventoryItems.remove(DeleteItem);
             clearfields();
             saveandexit();
+            
             System.out.print("Item is sucessfully deleted");
             
         }
@@ -226,12 +239,14 @@ public class InventoryController {
         String filepath=FilePathField.getText();
         String website=storewebsiteField.getText();
         
+        
         if (itemname.isEmpty()||location.isEmpty()||website.isEmpty()||
                 filepath.isEmpty()){
-            Alert information=new Alert(Alert.AlertType.INFORMATION);
-            information.setTitle("Invalid Input");
-            information.setContentText("Please fill in all the required field");
-            information.showAndWait();
+           Alert invalidInput=new Alert(Alert.AlertType.INFORMATION);
+           invalidInput.setTitle("Invalid Input");
+           invalidInput.setContentText("Please fill in all required field");
+           invalidInput.showAndWait();
+           
             
         } else{
             Alert confirmation=new Alert(Alert.AlertType.CONFIRMATION);
@@ -240,24 +255,22 @@ public class InventoryController {
             Optional<ButtonType> result=confirmation.showAndWait();
             
                 if(result.isPresent()&&result.get()==ButtonType.OK){
-                try(BufferedWriter writer=new BufferedWriter(new FileWriter("HomeInventoryFile.txt"))){
-            
-                writer.write( itemname+"#"+location+"#"+price+"#"+Date+"#"+website+"#"+note+"#"+filepath);
-                writer.newLine();
-            
-        } catch (IOException fe){
-            System.out.println(fe);
-            
-        }
-                    clearfields();
-                 } else{
+                saveandexit();
+                clearfields();
+                readfile(inventoryItems);
+                } 
+                   
+                  else{
                     Alert information=new Alert(Alert.AlertType.INFORMATION);
                     information.setContentText("Addition of item is cancelled");
                     information.showAndWait();
                     
                 }
-             }
         }
+    }
+        
+             
+        
     public void clearfields(){
         iNameField.clear();
         locationField.getSelectionModel().clearSelection();
@@ -268,7 +281,7 @@ public class InventoryController {
         storewebsiteField.clear();
     }
     public void saveandexit(){
-       
+      
         String itemname=iNameField.getText();
         String location=locationField.getSelectionModel().getSelectedItem();
         String price=priceField.getText();
@@ -278,10 +291,10 @@ public class InventoryController {
         String website=storewebsiteField.getText();
         
         
-       
+    if(!itemname.isEmpty())  { 
             
-        try(BufferedWriter writer=new BufferedWriter(new FileWriter
-        ("HomeInventoryFile.txt"))){
+        try(BufferedWriter writer=new BufferedWriter(new FileWriter(
+                "HomeInventoryFile.txt",true))){
             
                 writer.write( itemname+"#"+location+"#"+price+"#"+Date+"#"+
                         website+"#"+note+"#"+filepath);
@@ -291,12 +304,24 @@ public class InventoryController {
             System.out.println(fe);
             
         }
+    }
         
+    }
+     public void confirmExit(){
+         saveandexit();
+        Alert msg=new Alert(Alert.AlertType.CONFIRMATION);
+        msg.setTitle("Confirmation Dialog");
+        msg.setContentText("Are you sure to exit?");
+        Optional<ButtonType> result=msg.showAndWait();
+        
+        if(result.get()==ButtonType.OK){
+            System.exit(0);
+        }
     }
     
     
-    public void readfile(List<inventoryItem> inventoryItems) {
-        
+   /* public List<inventoryItem> readfile() {
+        List<inventoryItem> inventoryItems = new ArrayList<>();
         try(BufferedReader reader=new BufferedReader(new FileReader("HomeInventoryFile.txt"))){
             String line;
             while(( line=reader.readLine())!=null){
@@ -317,7 +342,32 @@ public class InventoryController {
         }catch(IOException ex){
                 ex.printStackTrace();
                 }
+        return inventoryItems;
+    }*/
+      public void readfile(List<inventoryItem> inventoryItems) {
+        
+        try(BufferedReader reader=new BufferedReader(new FileReader("HomeInventoryFile.txt"))){
+            String line;
+            while(( line=reader.readLine())!=null){
+               String item[]=line.split("#");
+             inventoryItem items=new inventoryItem(
+                     item[0],
+                     item[1],
+                     Double.parseDouble(item[2]),
+                     LocalDate.parse(item[3]),
+                     item[4],
+                     item[5],
+                     item[6]);
+             inventoryItems.add(items);
+                
+                
+            
+        }System.out.println();
+        }catch(IOException ex){
+                ex.printStackTrace();
+                }
     }
+
     
     public Scene getScene(){
         
