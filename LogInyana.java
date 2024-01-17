@@ -79,13 +79,15 @@ public class LogIn {
 
             if (authenticateUser(username, password)) {
                 infoBox("Login Successful!", null, "Success");
+                homepage.switchToInventoryPage();
+                
             } else {
                 infoBox("Incorrect Username or Password", null, "Failed");
             }
         });
 
         back.setOnAction((ActionEvent e) -> {
-            homepage.switchToHomepage();
+            primaryStage.setScene(homepage.getScene());
         });
 
         VBox root = new VBox(5);
