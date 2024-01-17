@@ -63,10 +63,10 @@ public class Register {
         container.setAlignment(Pos.CENTER);
 
         Button submit = new Button("Submit");
-        Button backk = new Button("Back"); 
+        Button clear = new Button("Clear"); 
        
         HBox button = new HBox(10);
-        button.getChildren().addAll(submit, backk);
+        button.getChildren().addAll(submit, clear);
         button.setAlignment(Pos.CENTER);
 
         submit.setOnAction((ActionEvent e) -> {
@@ -88,13 +88,27 @@ public class Register {
             saveRegistrationInfo();
             if (expectedFirstname.equals(firstname) && expectedLastname.equals(lastname)&& expectedUsername.equals(username) && expectedPassword.equals(password)&& expectedEmail.equals(emails)) {
                 infoBox("Registration Successful!", null, "Success");
+                fnText.clear();
+            lnText.clear();
+            emelText.clear();
+            usnameeText.clear();
+            passText.clear();
             } else {
                 infoBox("Registration failed! Please fill in your details again", null, "Failed");
+                fnText.clear();
+            lnText.clear();
+            emelText.clear();
+            usnameeText.clear();
+            passText.clear();
             }
         });
         
-        backk.setOnAction((ActionEvent e) -> {
-            primaryStage.setScene(homepage.getScene());
+        clear.setOnAction((ActionEvent e) -> {
+            fnText.clear();
+            lnText.clear();
+            emelText.clear();
+            usnameeText.clear();
+            passText.clear();
         });
 
         VBox root = new VBox(5);
