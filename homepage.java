@@ -1,5 +1,4 @@
 
-package org.openjfx.homeinventorymanager;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -34,7 +33,7 @@ public class homepage {
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
 
-        Label sceneTitle = new Label("Welcome");
+        Label sceneTitle = new Label("Welcome!");
         sceneTitle.setTextAlignment(TextAlignment.CENTER);
         sceneTitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 30));
         grid.add(sceneTitle, 0, 0, 2, 1);
@@ -65,16 +64,20 @@ public class homepage {
         Scene scene = new Scene(root, 400, 300);
         primaryStage.setScene(scene);
     }
-    
-    public void switchToHomepage() {
-        primaryStage.setScene(getScene());
+    public void switchToInventoryPage() {
+        InventoryController inventoryController = new InventoryController();
+        primaryStage.setScene(inventoryController.getScene());
     }
+    /*public void switchToHomepage() {
+        primaryStage.setScene(getScene());
+    }*/
 
     public Scene getScene() {
         return primaryStage.getScene();
     }
 
     public void show() {
+        primaryStage.setScene(getScene());
         primaryStage.show();
     }
 }
