@@ -69,6 +69,8 @@ public class InventoryController {
     noteField=new TextField();
     FilePathField=new TextField();
     photoView=new ImageView();
+    photoView.setFitWidth(75);
+    photoView.setPreserveRatio(true);
     SearchItemField=new TextField();
     
     Label name=new Label("Inventory Name ");
@@ -83,7 +85,6 @@ public class InventoryController {
     
     
     search.setOnAction(e -> search());
-    
     add.setOnAction(e -> add());
     save.setOnAction(e -> saveandexit());
     exit.setOnAction(e -> saveandexit());
@@ -93,12 +94,7 @@ public class InventoryController {
             button1.getChildren().addAll(edit,delete,save);
             HBox button2=new HBox(10);
             button2.getChildren().addAll(add,search);
-            
-            
-           
-    
-    
-    
+         
     
     priceanddate.getChildren().addAll(priceField,date,dateField);
     
@@ -180,6 +176,7 @@ public class InventoryController {
             EditItem.setStoreOrWebsite(storewebsiteField.getText());
             
             System.out.print("Item is successfully edited");
+            saveandexit();
         }
         else{
             System.out.print("Edition is cancelled ");
@@ -204,9 +201,12 @@ public class InventoryController {
         confirmation.setContentText("Are you sure you want to delete?");
         Optional<ButtonType> result=confirmation.showAndWait();
         
-        if(result.isPresent()&& result.get()==ButtonType.YES){
+        if(result.isPresent()&& result.get()==ButtonType.OK){
             inventoryItems.remove(DeleteItem);
+            clearfields();
+            saveandexit();
             System.out.print("Item is sucessfully deleted");
+            
         }
         else{
             System.out.print("Deletion is cancelled ");
@@ -217,7 +217,7 @@ public class InventoryController {
         String itemname=iNameField.getText();
         String location=locationField.getText();
         double price=Double.parseDouble(priceField.getText());
-        LocalDate date=dateField.getValue();
+        LocalDate Date=dateField.getValue();
         String note=noteField.getText();
         String filepath=FilePathField.getText();
         String website=storewebsiteField.getText();
@@ -236,10 +236,15 @@ public class InventoryController {
             Optional<ButtonType> result=confirmation.showAndWait();
             
                 if(result.isPresent()&&result.get()==ButtonType.OK){
-                inventoryItem additem=new inventoryItem(itemname,location,price,
-                    date,website,note,filepath);
-                    inventoryItems.add(additem);
-                    System.out.println("Item has been added successfully");
+                try(BufferedWriter writer=new BufferedWriter(new FileWriter("HomeInventoryFile.txt"))){
+            
+                writer.write( itemname+"#"+location+"#"+price+"#"+Date+"#"+website+"#"+note+"#"+filepath);
+                writer.newLine();
+            
+        } catch (IOException fe){
+            System.out.println(fe);
+            
+        }
                     clearfields();
                  } else{
                     Alert information=new Alert(Alert.AlertType.INFORMATION);
@@ -269,25 +274,20 @@ public class InventoryController {
         String website=storewebsiteField.getText();
         
         
-        if (itemname.isEmpty()||location.isEmpty()||website.isEmpty()||
-                filepath.isEmpty()){
-            Alert information=new Alert(Alert.AlertType.INFORMATION);
-            information.setTitle("Invalid Input");
-            information.setHeaderText("");
-            information.setContentText("Please fill in all the required field");
-            information.showAndWait();
-        }else{
+       
             
-        try(BufferedWriter writer=new BufferedWriter(new FileWriter("HomeInventoryFile.txt"))){
+        try(BufferedWriter writer=new BufferedWriter(new FileWriter
+        ("HomeInventoryFile.txt"))){
             
-                writer.write( itemname+"#"+location+"#"+price+"#"+Date+"#"+note+"#"+filepath+"#"+website);
+                writer.write( itemname+"#"+location+"#"+price+"#"+Date+"#"+
+                        website+"#"+note+"#"+filepath);
                 writer.newLine();
             
         } catch (IOException fe){
             System.out.println(fe);
             
         }
-        }
+        
     }
     
     
