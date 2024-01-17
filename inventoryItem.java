@@ -1,5 +1,6 @@
-package org.openjfx.homeinventorymanager;
-import java.util.Date;
+package org.openjfx.homeinventoryproject;
+import java.time.LocalDate;
+//import java.util.Date;
 
 public class inventoryItem {
     
@@ -7,13 +8,12 @@ public class inventoryItem {
     private String itemName;
     private String location;
     private double purchasePrice;
-    private Date datePurchased;
+    private LocalDate datePurchased;
     private String storeOrWebsite;
     private String note;
     private String photoFilePath;
-
-    //constructor for inventoryItem
-    public inventoryItem(String itemName, String itemLocation, double purchasePrice, Date datePurchased,String purchasePlatform, String note, String photoFilePath){
+    
+    public inventoryItem(String itemName, String itemLocation, double purchasePrice, LocalDate datePurchased,String purchasePlatform, String note, String photoFilePath){
         this.itemName = itemName;
         this.location = itemLocation;
         this.purchasePrice = purchasePrice;
@@ -48,11 +48,11 @@ public class inventoryItem {
         this.purchasePrice = purchasePrice;
     }
 
-    public Date getDatePurchased() {
+    public LocalDate getDatePurchased() {
         return datePurchased;
     }
 
-    public void setDatePurchased(Date datePurchased) {
+    public void setDatePurchased(LocalDate datePurchased) {
         this.datePurchased = datePurchased;
     }
 
