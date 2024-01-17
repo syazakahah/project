@@ -17,6 +17,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -35,7 +36,7 @@ import javafx.stage.Stage;
 public class InventoryController {
 
     private TextField iNameField;
-    private TextField locationField;
+    private ComboBox<String> locationField;
     private TextField priceField;
     private DatePicker dateField;
     private TextField storewebsiteField;
@@ -62,7 +63,10 @@ public class InventoryController {
        
         
     iNameField=new TextField();
-    locationField=new TextField();
+    locationField=new ComboBox<>();
+    locationField.getItems().addAll("Kuala Lumpur", "Selangor",
+            "Negeri Sebmilan", "Sabah");
+    locationField.setPrefWidth(425);
     priceField=new TextField();
     dateField=new DatePicker();
     storewebsiteField=new TextField();
