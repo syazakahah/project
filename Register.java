@@ -1,6 +1,4 @@
 
-package org.openjfx.homeinventorymanager;
-
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -96,7 +94,7 @@ public class Register {
         });
         
         backk.setOnAction((ActionEvent e) -> {
-            homepage.switchToHomepage();
+            primaryStage.setScene(homepage.getScene());
         });
 
         VBox root = new VBox(5);
@@ -138,5 +136,4 @@ public class Register {
         return sceneRegister;
     }
 }
-
 
