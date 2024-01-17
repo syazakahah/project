@@ -46,7 +46,7 @@ public class Register {
         Label usnamee = new Label("Username");
         Label pass = new Label("Password");
 
-        VBox first = new VBox(10);
+        VBox first = new VBox(20);
         first.getChildren().addAll(firstName, lastName, email, usnamee, pass);
         first.setAlignment(Pos.CENTER);
 
@@ -111,16 +111,7 @@ public class Register {
     private void saveRegistrationInfo() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true))) {
             // Append the registration information to the text file
-            writer.write("First Name:"+ expectedFirstname);
-            writer.newLine();
-            writer.write("Last Name:"+ expectedLastname);
-            writer.newLine();
-            writer.write("Email:"+ expectedEmail);
-            writer.newLine();
-            writer.write("Username:"+ expectedUsername);
-            writer.newLine();
-            writer.write("Password:"+ expectedPassword );
-            writer.newLine();
+            writer.write(expectedUsername+ "#"+ expectedPassword);
             writer.newLine();
         } catch (IOException e) {
             e.printStackTrace();
