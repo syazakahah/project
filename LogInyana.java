@@ -62,10 +62,10 @@ public class LogIn {
         container1.setAlignment(Pos.CENTER);
 
         Button submit = new Button("Submit");
-        Button back = new Button("Back");
+        Button clear = new Button("Clear");
 
         HBox buttons = new HBox(10);
-        buttons.getChildren().addAll(submit, back);
+        buttons.getChildren().addAll(submit, clear);
         buttons.setAlignment(Pos.CENTER);
 
         submit.setOnAction((ActionEvent e) -> {
@@ -86,8 +86,9 @@ public class LogIn {
             }
         });
 
-        back.setOnAction((ActionEvent e) -> {
-            primaryStage.setScene(homepage.getScene());
+        clear.setOnAction((ActionEvent e) -> {
+            usnText.clear();
+            passText.clear();
         });
 
         VBox root = new VBox(5);
