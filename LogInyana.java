@@ -15,6 +15,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.control.PasswordField;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
@@ -51,7 +52,7 @@ public class LogIn {
         first.setAlignment(Pos.CENTER);
 
         TextField usnText = new TextField();
-        TextField passText = new TextField();
+        PasswordField passText = new PasswordField();
 
         VBox second = new VBox(10);
         second.getChildren().addAll(usnText, passText);
@@ -69,6 +70,7 @@ public class LogIn {
         buttons.setAlignment(Pos.CENTER);
 
         submit.setOnAction((ActionEvent e) -> {
+           
             String username = usnText.getText().toString();
             String password = passText.getText().toString();
 
