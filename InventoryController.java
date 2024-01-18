@@ -33,6 +33,7 @@ import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -49,6 +50,7 @@ public class InventoryController {
     private TextField FilePathField;
     private ImageView photoView;
     private TextField SearchItemField;
+    private GridPane keyboard;
     
     private Button search=new Button("Search");
     private Button add=new Button("Add");
@@ -69,8 +71,9 @@ public class InventoryController {
         
     iNameField=new TextField();
     locationField=new ComboBox<>();
-    locationField.getItems().addAll("Kuala Lumpur", "Selangor",
-            "Negeri Sebmilan", "Sabah");
+    locationField.getItems().addAll("Johor", "Kedah","Kelantan",
+            "Melaka","Negeri Sebmilan", "Pahang","Pulau Pinang",
+            "Perak","Perlis","Selangor","Terengganu","Sabah");
     locationField.setPrefWidth(425);
     priceField=new TextField();
     dateField=new DatePicker();
@@ -78,9 +81,11 @@ public class InventoryController {
     noteField=new TextField();
     FilePathField=new TextField();
     photoView=new ImageView();
-    photoView.setFitWidth(75);
+    photoView.setFitWidth(250);
     photoView.setPreserveRatio(true);
+    keyboard=createkeyboard();
     SearchItemField=new TextField();
+    
     
     Label name=new Label("Inventory Name ");
     Label loc=new Label("Location ");
@@ -105,16 +110,23 @@ public class InventoryController {
             HBox button1=new HBox(10);
             button1.getChildren().addAll(edit,delete,exit,clear);
             HBox button2=new HBox(10);
-            button2.getChildren().addAll(add,search);
-         
+            button2.getChildren().addAll(add);
+            
+           
+            
     
     priceanddate.getChildren().addAll(priceField,date,dateField);
-    
+    HBox searchpanel=new HBox(5);
+    searchpanel.getChildren().addAll(SearchItemField,search);
+    VBox searchitem=new VBox(5);
+    searchitem.getChildren().addAll(searchpanel,keyboard); 
+    HBox pic=new HBox(20);
+    pic.getChildren().addAll(searchitem,photoView);
     VBox field = new VBox(8);
     field.getChildren().addAll(iNameField,locationField,priceanddate,storewebsiteField,
             noteField,FilePathField );
     VBox button=new VBox(15);
-    button.getChildren().addAll(field,photoView,button1);
+    button.getChildren().addAll(field,pic,button1);
     VBox label=new VBox(15);
     label.getChildren().addAll(name,loc,price, store,notes,photo);
     label.setAlignment(Pos.BASELINE_RIGHT);
@@ -133,11 +145,48 @@ public class InventoryController {
     
         
     }
+    public GridPane createkeyboard(){
+        GridPane tiles=new GridPane();
+        //tiles.setAlignment(Pos.C);
+        //tiles.setHgap(10);
+       // tiles.setVgap(10);
+        
+        
+        String[][] layout={
+            {"A","B","C","D","E","F"},
+            {"G","H","I","J","K","L"},
+            {"M","N","O","P","Q","R"},
+            {"S","T","U","V","W","X"},
+            {"Y","Z","    "}
+            
+        };
+        for(int i=0;i<layout.length;i++){
+            for (int j=0;j<layout[i].length;j++){
+                Button button=createbutton(layout[i][j]);
+                tiles.add(button, j, i);
+            }
+        }
+        return tiles;
+    }
+    public Button createbutton(String text){
+        Button button= new Button(text);
+        if("    ".equals(text)){
+            button.setOnAction(e->pastetosearchitem(" "));
+        }else{
+             button.setOnAction(e->pastetosearchitem(text));
+        }
+       
+        return button;
+    }
+    public void pastetosearchitem(String text){
+        SearchItemField.appendText(text);
+    }
+    
    
     
     public void search() {
         readfile(inventoryItems);
-        String ItemtoSearch= iNameField.getText();
+        String ItemtoSearch=SearchItemField.getText();
         boolean found=false;
         if(!ItemtoSearch.isEmpty()){
             for(inventoryItem item : inventoryItems){
@@ -176,7 +225,7 @@ public class InventoryController {
             FilePathField.setText(item.getPhotoFilePath());
             noteField.setText(item.getNote());
             try{
-            InputStream stream = new FileInputStream("file:" + item.getPhotoFilePath());
+            InputStream stream = new FileInputStream( item.getPhotoFilePath());
             photoView.setImage(new Image(stream));
             } catch (FileNotFoundException e){
                 System.out.println("Message: " + e);
@@ -219,11 +268,11 @@ public class InventoryController {
         
         if(result.isPresent()&& result.get()==ButtonType.OK){
             inventoryItems.remove(DeleteItem);
-            clearfields();
+            
             saveandexit();
             
             System.out.print("Item is sucessfully deleted");
-            
+            clearfields();
         }
         else{
             System.out.print("Deletion is cancelled ");
@@ -269,8 +318,6 @@ public class InventoryController {
         }
     }
         
-             
-        
     public void clearfields(){
         iNameField.clear();
         locationField.getSelectionModel().clearSelection();
@@ -279,32 +326,35 @@ public class InventoryController {
         noteField.clear();
         FilePathField.clear();
         storewebsiteField.clear();
+        SearchItemField.clear();
     }
     public void saveandexit(){
       
-        String itemname=iNameField.getText();
+       
+        
+        
+    
+            
+        try(BufferedWriter writer=new BufferedWriter(new FileWriter(
+                "HomeInventoryFile.txt",true))){
+            for(inventoryItem item : inventoryItems){
+             String itemname=iNameField.getText();
         String location=locationField.getSelectionModel().getSelectedItem();
         String price=priceField.getText();
         LocalDate Date=dateField.getValue();
         String note=noteField.getText();
         String filepath=FilePathField.getText();
         String website=storewebsiteField.getText();
-        
-        
-    if(!itemname.isEmpty())  { 
-            
-        try(BufferedWriter writer=new BufferedWriter(new FileWriter(
-                "HomeInventoryFile.txt",true))){
-            
                 writer.write( itemname+"#"+location+"#"+price+"#"+Date+"#"+
                         website+"#"+note+"#"+filepath);
                 writer.newLine();
+                }
             
         } catch (IOException fe){
             System.out.println(fe);
             
         }
-    }
+    
         
     }
      public void confirmExit(){
@@ -318,32 +368,7 @@ public class InventoryController {
             System.exit(0);
         }
     }
-    
-    
-   /* public List<inventoryItem> readfile() {
-        List<inventoryItem> inventoryItems = new ArrayList<>();
-        try(BufferedReader reader=new BufferedReader(new FileReader("HomeInventoryFile.txt"))){
-            String line;
-            while(( line=reader.readLine())!=null){
-               String item[]=line.split("#");
-             inventoryItem items=new inventoryItem(
-                     item[0],
-                     item[1],
-                     Double.parseDouble(item[2]),
-                     LocalDate.parse(item[3]),
-                     item[4],
-                     item[5],
-                     item[6]);
-             inventoryItems.add(items);
-                
-                
-            
-        }
-        }catch(IOException ex){
-                ex.printStackTrace();
-                }
-        return inventoryItems;
-    }*/
+   
       public void readfile(List<inventoryItem> inventoryItems) {
         
         try(BufferedReader reader=new BufferedReader(new FileReader("HomeInventoryFile.txt"))){
