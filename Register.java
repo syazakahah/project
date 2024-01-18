@@ -123,7 +123,7 @@ public class Register {
     private void saveRegistrationInfo() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true))) {
             // Append the registration information to the text file
-            writer.write(expectedUsername+ "#"+ expectedPassword);
+            writer.write(expectedUsername+ "#"+ expectedPassword + "#" + expectedFirstname + "#"+expectedLastname+ "#"+ expectedEmail);
             writer.newLine();
         } catch (IOException e) {
             e.printStackTrace();
